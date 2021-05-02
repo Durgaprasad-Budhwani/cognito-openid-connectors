@@ -1,0 +1,84 @@
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      # Generate a name based on the stage
+      UserPoolName: ${self:custom.stage}-clever-openid-connector
+      # Set email as an alias
+      AliasAttributes:
+        - email
+        - preferred_username
+
+  CleverOIDCUserPoolIdentityProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPool
+      ProviderName: ${self:custom.stage}-clever-oidc
+      ProviderDetails:
+        client_id: ${env:CLEVER_CLIENT_ID}
+        client_secret: ${env:CLEVER_CLIENT_SECRET}
+        authorize_scopes: "openid, read:district_admins_basic, read:school_admins_basic, read:students_basic, read:teachers_basic, read:user_id"
+        oidc_issuer: ${env:CLEVER_AUTH_API_URL}
+        authorize_url: ${env:CLEVER_AUTH_API_URL}/authorize
+        token_url: ${env:CLEVER_AUTH_API_URL}/token
+        jwks_uri: ${env:CLEVER_AUTH_API_URL}/.well-known/jwks.json
+        attributes_url: ${env:CLEVER_AUTH_API_URL}/userInfo
+        attributes_request_method: GET
+      ProviderType: "OIDC"
+      AttributeMapping:
+        email: "email"
+        name: "name"
+        given_name: "first_name"
+        family_name: "last_name"
+
+  CognitoUserPoolClient:
+    DependsOn: CleverOIDCUserPoolIdentityProvider
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      # Generate an app client name based on the stage
+      ClientName: ${self:custom.stage}-clever-openid-connector-user-pool-client
+      SupportedIdentityProviders:
+        - ${self:custom.stage}-clever-oidc
+      CallbackURLs:
+        - http://localhost:3001
+        - ${env:DOMAIN_URL}
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - aws.cognito.signin.user.admin
+        - email
+        - openid
+      UserPoolId:
+        Ref: CognitoUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: ${self:custom.stage}-clever-openid-connector
+      UserPoolId:
+        Ref: CognitoUserPool
+
+
+# Print out the Id of the User Pool that is created
+Outputs:
+  UserPoolId:
+    Value:
+      Ref: CognitoUserPool
+
+  UserPoolArn:
+    Value:
+      Fn::GetAtt: [ "CognitoUserPool", "Arn" ]
+
+  UserPoolClientId:
+    Value:
+      Ref: CognitoUserPoolClient
+
+  CognitoUserPoolDomain:
+    Value:
+      Ref: CognitoUserPoolDomain

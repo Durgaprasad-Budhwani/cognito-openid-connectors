@@ -1,0 +1,92 @@
+service: clever-openid-connector
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+package:
+  individually: true
+  exclude:
+    - ./**
+    - .env.dev
+  include:
+    - ./resources/**
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  debug: ${env:DEBUG, "true"}
+  serverless-offline:
+    useDocker: true
+    address: 0.0.0.0
+    region: us-west-2
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-west-2
+  stage: dev
+  memorySize: 128 # optional, in MB, default is 1024
+  timeout: 30 # optional, in seconds, default is 6
+  tracing:
+    apiGateway: true
+    lambda: true
+
+  environment:
+    USER_POOL_ID:
+      Ref: CognitoUserPool
+    DEBUG: ${self:custom.debug}
+    CLEVER_CLIENT_ID: ${env:CLEVER_CLIENT_ID}
+    CLEVER_AUTHORIZATION_ENDPOINT: ${env:CLEVER_AUTHORIZATION_ENDPOINT}
+    CLEVER_TOKEN_ENDPOINT: ${env:CLEVER_TOKEN_ENDPOINT}
+    CLEVER_API_ENDPOINT: ${env:CLEVER_API_ENDPOINT}
+    CLEVER_AUTH_API_URL: ${env:CLEVER_AUTH_API_URL}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cognito-idp:*
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource:
+        - "Fn::GetAtt": [ CognitoUserPool, Arn ]
+        - "*"
+
+resources:
+  - ${file(cognito-user-pool.yml)}
+
+functions:
+  auth:
+    package:
+      include:
+        - ./bin/clever
+    handler: bin/clever
+    events:
+      - http:
+          method: POST
+          path: /auth/clever/token
+          cors: true
+      - http:
+          method: GET
+          path: /auth/clever/token
+          cors: true
+      - http:
+          method: GET
+          path: /auth/clever/authorize
+          cors: true
+      - http:
+          method: GET
+          path: /auth/clever/userinfo
+          cors: true
+      - http:
+          method: POST
+          path: /auth/clever/userinfo
+          cors: true
+      - http:
+          method: GET
+          path: /auth/clever/.well-known/openid-configuration
+          cors: true
+      - http:
+          method: GET
+          path: /auth/clever/.well-known/jwks.json
+          cors: true
+    timeout: 30
