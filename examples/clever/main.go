@@ -1,11 +1,11 @@
 package main
 
 import (
-	clever2 "cognito-openid-connectors/providers/clever"
 	"context"
 	"net/http"
 
 	"cognito-openid-connectors/common"
+	"cognito-openid-connectors/providers/clever"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -13,7 +13,7 @@ import (
 
 // nolint(gocritic)
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var authController = clever2.NewController(clever2.NewClever(), clever2.NewOpenIDConnect())
+	var authController = clever.NewController()
 	switch req.Resource {
 	// open id connect endpoints
 	case common.GetStage() + "/auth/clever/token":

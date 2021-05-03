@@ -1,4 +1,4 @@
-package clever
+package internal
 
 import (
 	"fmt"
