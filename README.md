@@ -1,5 +1,7 @@
 # OpenID Connect Wrapper for Cognito (Golang)
 
+> This project is inspired from [github-cognito-openid-wrapper](https://github.com/TimothyJones/github-cognito-openid-wrapper)
+
 Do you want to add Slack, Github, Quickbook, Clever etc as an OIDC (OpenID Connect) provider to an AWS Cognito User Pool?
 Have you run in to trouble because these providers only provides OAuth2.0 endpoints, and doesn't support OpenID Connect?
 
@@ -108,6 +110,18 @@ A full OpenID implementation would also include:
 **Known issues**
 
 See [the issue tracker](https://github.com/Durgaprasad-Budhwani/cognito-openid-connectors/issues) for an up to date list.
+
+## Scope
+
+Right now this wrapper only support Clever OAuth Provider but this project is going to extend to supports following OAuth Providers
+
+- [X] Clever
+- [ ] Github
+- [ ] Slack
+- [ ] Gitlab
+- [ ] Jira
+- [ ] Bitbucket
+
 
 ## Contributing
 
