@@ -1,7 +1,6 @@
 package common
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -12,7 +11,6 @@ import (
 // and returns a 500 Internal Server Error response that the AWS API
 // Gateway understands.
 func ServerError(err error) (events.APIGatewayProxyResponse, error) {
-	spew.Dump(err)
 	return ResponseError(http.StatusInternalServerError, err.Error())
 }
 

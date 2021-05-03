@@ -13,14 +13,14 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-type clever struct {
+type Clever struct {
 }
 
-func NewClever() clever {
-	return clever{}
+func NewClever() Clever {
+	return Clever{}
 }
 
-func (c clever) GetToken(
+func (c Clever) GetToken(
 	ctx context.Context,
 	clientID, clientSecret, code, redirectURI string,
 ) (*internal2.CleverToken, error) {
@@ -49,7 +49,7 @@ func (c clever) GetToken(
 	return &token, err
 }
 
-func (c clever) GetAuthorizeURL(clientID, redirectURI, scope, responseType, state string) string {
+func (c Clever) GetAuthorizeURL(clientID, redirectURI, scope, responseType, state string) string {
 	authorizationEndpoint := os.Getenv(internal2.CleverAuthorizationEndpoint)
 	URL, err := url.Parse(authorizationEndpoint)
 	if err != nil {
@@ -69,7 +69,7 @@ func (c clever) GetAuthorizeURL(clientID, redirectURI, scope, responseType, stat
 	return URL.String()
 }
 
-func (c clever) GetUserInfo(ctx context.Context, token string) (*internal2.CleverUserInfo, error) {
+func (c Clever) GetUserInfo(ctx context.Context, token string) (*internal2.CleverUserInfo, error) {
 	clientURL := fmt.Sprintf("%s%s%s", os.Getenv(internal2.CleverAPIEndpoint), internal2.CleverAPIVersion, "/me")
 	httpClient := common.NewAccessTokenClient(&token)
 	res, err := httpClient.Get(ctx, clientURL)
@@ -82,7 +82,7 @@ func (c clever) GetUserInfo(ctx context.Context, token string) (*internal2.Cleve
 	return &cleverUser, err
 }
 
-func (c clever) GetUser(ctx context.Context, token, id string) (*internal2.CleverUser, error) {
+func (c Clever) GetUser(ctx context.Context, token, id string) (*internal2.CleverUser, error) {
 	clientURL := fmt.Sprintf("%s%s%s%s", os.Getenv(internal2.CleverAPIEndpoint), internal2.CleverAPIVersion, "/users/", id)
 	httpClient := common.NewAccessTokenClient(&token)
 	res, err := httpClient.Get(ctx, clientURL)

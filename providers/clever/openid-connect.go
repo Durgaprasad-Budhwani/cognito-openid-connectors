@@ -6,23 +6,23 @@ import (
 	"cognito-openid-connectors/auth"
 )
 
-type openIDConnect struct {
+type OpenIDConnect struct {
 }
 
-func NewOpenIDConnect() openIDConnect {
-	return openIDConnect{}
+func NewOpenIDConnect() OpenIDConnect {
+	return OpenIDConnect{}
 }
 
-// WellKnownConfiguration openIDConnect Connect Discovery
-// The well known endpoint an be used to retrieve information for openIDConnect Connect clients.
-func (h openIDConnect) WellKnownConfiguration(host string) *auth.WellKnown {
+// WellKnownConfiguration OpenIDConnect Connect Discovery
+// The well known endpoint an be used to retrieve information for OpenIDConnect Connect clients.
+func (h OpenIDConnect) WellKnownConfiguration(host string) *auth.WellKnown {
 	return &auth.WellKnown{
-		Issuer:                            fmt.Sprintf("https://%s/auth/clever", host),
-		AuthURL:                           fmt.Sprintf("https://%s/auth/clever/authorize", host),
-		TokenURL:                          fmt.Sprintf("https://%s/auth/clever/token", host),
+		Issuer:                            fmt.Sprintf("https://%s/auth/Clever", host),
+		AuthURL:                           fmt.Sprintf("https://%s/auth/Clever/authorize", host),
+		TokenURL:                          fmt.Sprintf("https://%s/auth/Clever/token", host),
 		TokenEndpointAuthMethodsSupported: []string{"client_secret_basic", "private_key_jwt"},
-		UserinfoEndpoint:                  fmt.Sprintf("https://%s/auth/clever/userinfo", host),
-		JWKsURI:                           fmt.Sprintf("https://%s/auth/clever/.well-known/jwks.json", host),
+		UserinfoEndpoint:                  fmt.Sprintf("https://%s/auth/Clever/userinfo", host),
+		JWKsURI:                           fmt.Sprintf("https://%s/auth/Clever/.well-known/jwks.json", host),
 		ScopesSupported: []string{
 			"read:district_admins_basic",
 			"read:school_admins_basic",
@@ -55,7 +55,7 @@ func (h openIDConnect) WellKnownConfiguration(host string) *auth.WellKnown {
 // WillKnownJWKSJSON JSON Web Keys Discovery
 // This endpoint returns JSON Web Keys to be used as public keys for verifying OpenID Authorize ID Tokens and,
 // if enabled, OAuth 2.0 JWT Access Tokens. This endpoint can be used with client libraries like
-func (h openIDConnect) WillKnownJWKSJSON(pubKey []byte, kid string) (*string, error) {
+func (h OpenIDConnect) WillKnownJWKSJSON(pubKey []byte, kid string) (*string, error) {
 	crypto := auth.NewCrypto()
 	return crypto.GetJSONWebKey(pubKey, kid)
 }

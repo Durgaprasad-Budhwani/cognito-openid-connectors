@@ -21,11 +21,11 @@ import (
 )
 
 type controller struct {
-	client        clever
-	openIDConnect openIDConnect
+	client        Clever
+	openIDConnect OpenIDConnect
 }
 
-func NewController(client clever, openIDConnect openIDConnect) auth.IController {
+func NewController(client Clever, openIDConnect OpenIDConnect) auth.IController {
 	return &controller{client: client, openIDConnect: openIDConnect}
 }
 
@@ -111,7 +111,6 @@ func (c controller) Authorize(
 	scope, _ := common.GetStringKey(req.QueryStringParameters, "redirect_uri")
 	authorizeURL := c.client.GetAuthorizeURL(clientID, redirectURI, scope, responseType, state)
 	return common.Redirect(authorizeURL)
-
 }
 
 func (c *controller) GetToken(
@@ -144,7 +143,7 @@ func (c *controller) GetToken(
 	if err != nil {
 		return common.ServerError(err)
 	}
-	authAPIUrl := os.Getenv(internal2.CleverAuthApiUrl)
+	authAPIUrl := os.Getenv(internal2.CleverAuthAPIURL)
 	crypt := auth.NewCrypto()
 	claims := jwt.StandardClaims{
 		Subject:   token.Subject,
