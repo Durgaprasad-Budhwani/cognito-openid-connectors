@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+// nolint(gocritic)
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var authController = clever.NewController(clever.NewClever(), clever.NewOpenIDConnect())
 	switch req.Resource {
