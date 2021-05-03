@@ -85,6 +85,12 @@ describing the authenticated user can be accessed.
 OpenID Connect describes a standard way to get user data, and is therefore a good choice
 for identity federation.
 
+### Custom Shim
+
+This project provides the OpenID shim to wrap OAuth Provider's implementation, by combining the two diagrams:
+
+![Shim](docs/Shim.png)
+
 #### Missing features
 
 This is a near-complete implementation of [OpenID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html).

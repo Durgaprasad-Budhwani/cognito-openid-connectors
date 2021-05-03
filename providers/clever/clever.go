@@ -1,13 +1,13 @@
 package clever
 
 import (
+	internal2 "cognito-openid-connectors/providers/clever/internal"
 	"context"
 	"fmt"
 	"log"
 	"net/url"
 	"os"
 
-	"cognito-openid-connectors/clever/internal"
 	"cognito-openid-connectors/common"
 
 	jsoniter "github.com/json-iterator/go"
@@ -23,18 +23,18 @@ func NewClever() clever {
 func (c clever) GetToken(
 	ctx context.Context,
 	clientID, clientSecret, code, redirectURI string,
-) (*internal.CleverToken, error) {
+) (*internal2.CleverToken, error) {
 	data := url.Values{}
 	data.Set("grant_type", "authorization_code")
 	data.Add("code", code)
 	data.Add("redirect_uri", redirectURI) // this is cognito redirect URL
-	tokenEndpoint := os.Getenv(internal.CleverTokenEndpoint)
+	tokenEndpoint := os.Getenv(internal2.CleverTokenEndpoint)
 	httpClient := common.NewClientCredentialsHTTPClient(&clientID, &clientSecret)
 	res, err := httpClient.PostForm(ctx, tokenEndpoint, data)
 	if err != nil {
 		return nil, err
 	}
-	var token internal.CleverToken
+	var token internal2.CleverToken
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	err = json.Unmarshal(res, &token)
 	if err != nil {
@@ -50,7 +50,7 @@ func (c clever) GetToken(
 }
 
 func (c clever) GetAuthorizeURL(clientID, redirectURI, scope, responseType, state string) string {
-	authorizationEndpoint := os.Getenv(internal.CleverAuthorizationEndpoint)
+	authorizationEndpoint := os.Getenv(internal2.CleverAuthorizationEndpoint)
 	URL, err := url.Parse(authorizationEndpoint)
 	if err != nil {
 		panic("error parsing url")
@@ -69,27 +69,27 @@ func (c clever) GetAuthorizeURL(clientID, redirectURI, scope, responseType, stat
 	return URL.String()
 }
 
-func (c clever) GetUserInfo(ctx context.Context, token string) (*internal.CleverUserInfo, error) {
-	clientURL := fmt.Sprintf("%s%s%s", os.Getenv(internal.CleverAPIEndpoint), internal.CleverAPIVersion, "/me")
+func (c clever) GetUserInfo(ctx context.Context, token string) (*internal2.CleverUserInfo, error) {
+	clientURL := fmt.Sprintf("%s%s%s", os.Getenv(internal2.CleverAPIEndpoint), internal2.CleverAPIVersion, "/me")
 	httpClient := common.NewAccessTokenClient(&token)
 	res, err := httpClient.Get(ctx, clientURL)
 	if err != nil {
 		return nil, err
 	}
-	var cleverUser internal.CleverUserInfo
+	var cleverUser internal2.CleverUserInfo
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	err = json.Unmarshal(res, &cleverUser)
 	return &cleverUser, err
 }
 
-func (c clever) GetUser(ctx context.Context, token, id string) (*internal.CleverUser, error) {
-	clientURL := fmt.Sprintf("%s%s%s%s", os.Getenv(internal.CleverAPIEndpoint), internal.CleverAPIVersion, "/users/", id)
+func (c clever) GetUser(ctx context.Context, token, id string) (*internal2.CleverUser, error) {
+	clientURL := fmt.Sprintf("%s%s%s%s", os.Getenv(internal2.CleverAPIEndpoint), internal2.CleverAPIVersion, "/users/", id)
 	httpClient := common.NewAccessTokenClient(&token)
 	res, err := httpClient.Get(ctx, clientURL)
 	if err != nil {
 		return nil, err
 	}
-	var resp internal.CleverUserResp
+	var resp internal2.CleverUserResp
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	err = json.Unmarshal(res, &resp)
 	return &resp.Data, err

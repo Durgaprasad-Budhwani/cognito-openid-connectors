@@ -1,6 +1,7 @@
 package clever
 
 import (
+	internal2 "cognito-openid-connectors/providers/clever/internal"
 	"context"
 	"errors"
 	"fmt"
@@ -12,7 +13,6 @@ import (
 	"time"
 
 	"cognito-openid-connectors/auth"
-	"cognito-openid-connectors/clever/internal"
 	"cognito-openid-connectors/common"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -59,7 +59,7 @@ func (c controller) GetJSONWebKey(
 	if err != nil {
 		return common.ServerError(err)
 	}
-	resp, err := c.openIDConnect.WillKnownJWKSJSON(pubKey, os.Getenv(internal.CleverAppKid))
+	resp, err := c.openIDConnect.WillKnownJWKSJSON(pubKey, os.Getenv(internal2.CleverAppKid))
 	if err != nil {
 		return common.ServerError(err)
 	}
@@ -84,7 +84,7 @@ func (c controller) GetUserInfo(
 		return common.ServerError(err)
 	}
 
-	claim := internal.Claim{
+	claim := internal2.Claim{
 		Name:       fmt.Sprintf("%s %s", user.Name.First, user.Name.Last),
 		FistName:   user.Name.First,
 		LastName:   user.Name.Last,
@@ -144,16 +144,16 @@ func (c *controller) GetToken(
 	if err != nil {
 		return common.ServerError(err)
 	}
-	authAPIUrl := os.Getenv(internal.CleverAuthApiUrl)
+	authAPIUrl := os.Getenv(internal2.CleverAuthApiUrl)
 	crypt := auth.NewCrypto()
 	claims := jwt.StandardClaims{
 		Subject:   token.Subject,
 		ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
 		Issuer:    authAPIUrl,
-		Audience:  os.Getenv(internal.CleverClientID),
+		Audience:  os.Getenv(internal2.CleverClientID),
 		IssuedAt:  time.Now().Unix(),
 	}
-	idToken, err := crypt.GetIDToken(privateKey, claims, os.Getenv(os.Getenv(internal.CleverAppKid)))
+	idToken, err := crypt.GetIDToken(privateKey, claims, os.Getenv(os.Getenv(internal2.CleverAppKid)))
 	if err != nil {
 		return common.ServerError(errors.New(cleverError))
 	}
