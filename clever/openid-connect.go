@@ -12,7 +12,7 @@ func NewOpenIDConnect() openIDConnect {
 	return openIDConnect{}
 }
 
-// openIDConnect Connect Discovery
+// WellKnownConfiguration openIDConnect Connect Discovery
 // The well known endpoint an be used to retrieve information for openIDConnect Connect clients.
 func (h openIDConnect) WellKnownConfiguration(host string) *auth.WellKnown {
 	return &auth.WellKnown{
@@ -51,8 +51,7 @@ func (h openIDConnect) WellKnownConfiguration(host string) *auth.WellKnown {
 	}
 }
 
-// JSON Web Keys Discovery
-//
+// WillKnownJWKSJSON JSON Web Keys Discovery
 // This endpoint returns JSON Web Keys to be used as public keys for verifying OpenID Authorize ID Tokens and,
 // if enabled, OAuth 2.0 JWT Access Tokens. This endpoint can be used with client libraries like
 func (h openIDConnect) WillKnownJWKSJSON(pubKey []byte, kid string) (*string, error) {
