@@ -1,8 +1,9 @@
 package clever
 
 import (
-	"cognito-openid-connectors/auth"
 	"fmt"
+
+	"cognito-openid-connectors/auth"
 )
 
 type openIDConnect struct {
