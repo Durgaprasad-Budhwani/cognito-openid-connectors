@@ -152,7 +152,7 @@ func (c *controller) GetToken(
 		Audience:  os.Getenv(internal.CleverClientID),
 		IssuedAt:  time.Now().Unix(),
 	}
-	idToken, err := crypt.GetIDToken(privateKey, claims, os.Getenv(os.Getenv(internal.CleverAppKid)))
+	idToken, err := crypt.GetIDToken(privateKey, claims, os.Getenv(internal.CleverAppKid))
 	if err != nil {
 		return common.ServerError(errors.New(cleverError))
 	}
